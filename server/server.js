@@ -91,10 +91,17 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
+// Apply CORS middleware first
 app.use(cors(corsOptions));
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Handle preflight requests explicitly (before rate limiting)
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(204);
+});
 
 // Security middleware
 app.use(helmet({
@@ -106,10 +113,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(mongoSanitize());
 app.use(xss());
 
-// Rate limiting
+// Rate limiting (skip for OPTIONS requests)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
+  skip: (req) => req.method === 'OPTIONS' // Skip rate limiting for preflight requests
 });
 app.use('/api/', limiter);
 
