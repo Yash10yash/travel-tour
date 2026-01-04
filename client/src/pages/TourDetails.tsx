@@ -1,6 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
 import { FiMapPin, FiClock, FiUsers, FiStar, FiCheck, FiX, FiCalendar, FiDollarSign } from 'react-icons/fi'
 import { tourService } from '../services/tour.service'
 import { isAuthenticated } from '../lib/auth'

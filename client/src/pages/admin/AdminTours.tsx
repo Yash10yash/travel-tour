@@ -230,7 +230,15 @@ const AdminTours = () => {
 }
 
 // Tour Modal Component
-const TourModal = ({ tour, destinations, onClose, onSave, isSaving }: any) => {
+interface TourModalProps {
+  tour?: any
+  destinations: any[]
+  onClose: () => void
+  onSave: (tourData: any) => void
+  isSaving: boolean
+}
+
+const TourModal = ({ tour, destinations, onClose, onSave, isSaving }: TourModalProps) => {
   const [formData, setFormData] = useState({
     title: tour?.title || '',
     destination: tour?.destination?._id || tour?.destination || '',
@@ -253,12 +261,12 @@ const TourModal = ({ tour, destinations, onClose, onSave, isSaving }: any) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
+    const { 'duration.days': _, 'duration.nights': __, ...restFormData } = formData
+    
     const tourData = {
-      ...formData,
+      ...restFormData,
       price: Number(formData.price),
       discount: Number(formData.discount),
-      'duration.days': Number(formData['duration.days']),
-      'duration.nights': Number(formData['duration.nights']),
       maxGroupSize: Number(formData.maxGroupSize),
       images: formData.images.split('\n').filter((url: string) => url.trim()),
       inclusions: formData.inclusions.split('\n').filter((item: string) => item.trim()),
@@ -269,10 +277,6 @@ const TourModal = ({ tour, destinations, onClose, onSave, isSaving }: any) => {
         nights: Number(formData['duration.nights'])
       }
     }
-
-    // Remove the nested duration keys
-    delete tourData['duration.days']
-    delete tourData['duration.nights']
 
     onSave(tourData)
   }

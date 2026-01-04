@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { isAuthenticated, isAdmin, getUser } from '../lib/auth'
+import { isAuthenticated, getUser } from '../lib/auth'
 import toast from 'react-hot-toast'
 
 interface AdminRouteProps {

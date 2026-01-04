@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
-import { FiHeart, FiX } from 'react-icons/fi'
+import { FiHeart } from 'react-icons/fi'
 import { userService } from '../../services/user.service'
 import TourCard from '../../components/TourCard'
 import toast from 'react-hot-toast'

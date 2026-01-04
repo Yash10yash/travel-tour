@@ -1,14 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
 import { FiUser, FiMail, FiPhone, FiSave } from 'react-icons/fi'
 import { userService } from '../../services/user.service'
-import { getUser, setUser } from '../../lib/auth'
+import { setUser } from '../../lib/auth'
 import toast from 'react-hot-toast'
 
 const Profile = () => {
   const queryClient = useQueryClient()
-  const currentUser = getUser()
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -18,14 +17,17 @@ const Profile = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['profile'],
     queryFn: () => userService.getProfile(),
-    onSuccess: (data) => {
+  })
+
+  useEffect(() => {
+    if (data?.data) {
       setFormData({
         name: data.data.name || '',
         phone: data.data.phone || '',
         email: data.data.email || ''
       })
     }
-  })
+  }, [data])
 
   const { mutate: updateProfile, isPending } = useMutation({
     mutationFn: userService.updateProfile,

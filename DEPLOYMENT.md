@@ -113,9 +113,10 @@ This guide will help you deploy the Travel Tour website to **Vercel (Frontend)**
    - Click "Environment Variables"
    - Add:
      ```
-     VITE_API_URL=https://your-render-app.onrender.com/api
+     VITE_API_URL=https://travel-tour-ivfg.onrender.com/api
      ```
-     (Replace `your-render-app` with your actual Render app name)
+     - Select all environments (Production, Preview, Development)
+     - Click "Add"
 
 6. Click "Deploy"
 7. Wait for deployment (takes 2-5 minutes)
@@ -149,7 +150,7 @@ This guide will help you deploy the Travel Tour website to **Vercel (Frontend)**
 5. Add environment variable:
    ```bash
    vercel env add VITE_API_URL
-   # Enter: https://your-render-app.onrender.com/api
+   # Enter: https://travel-tour-ivfg.onrender.com/api
    ```
 
 ---

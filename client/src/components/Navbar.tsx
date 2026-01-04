@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { getUser, isAuthenticated, isAdmin, logout } from '../lib/auth'
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const navigate = useNavigate()
   const authenticated = isAuthenticated()
   const user = getUser()
   const admin = isAdmin()

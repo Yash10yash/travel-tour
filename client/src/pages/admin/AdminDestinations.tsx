@@ -194,7 +194,14 @@ const AdminDestinations = () => {
 }
 
 // Destination Modal Component
-const DestinationModal = ({ destination, onClose, onSave, isSaving }: any) => {
+interface DestinationModalProps {
+  destination?: any
+  onClose: () => void
+  onSave: (destinationData: any) => void
+  isSaving: boolean
+}
+
+const DestinationModal = ({ destination, onClose, onSave, isSaving }: DestinationModalProps) => {
   const [formData, setFormData] = useState({
     name: destination?.name || '',
     country: destination?.country || '',
@@ -213,22 +220,21 @@ const DestinationModal = ({ destination, onClose, onSave, isSaving }: any) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    const destinationData = {
-      ...formData,
-      images: formData.images.split('\n').filter((url: string) => url.trim()),
-      coordinates: {
-        lat: formData['coordinates.lat'] ? Number(formData['coordinates.lat']) : undefined,
-        lng: formData['coordinates.lng'] ? Number(formData['coordinates.lng']) : undefined,
-      }
+    const { 'coordinates.lat': _, 'coordinates.lng': __, ...restFormData } = formData
+    
+    const coordinates = {
+      lat: formData['coordinates.lat'] ? Number(formData['coordinates.lat']) : undefined,
+      lng: formData['coordinates.lng'] ? Number(formData['coordinates.lng']) : undefined,
     }
 
-    // Remove the nested coordinate keys
-    delete destinationData['coordinates.lat']
-    delete destinationData['coordinates.lng']
+    const destinationData: any = {
+      ...restFormData,
+      images: formData.images.split('\n').filter((url: string) => url.trim()),
+    }
 
-    // Remove empty coordinates
-    if (!destinationData.coordinates.lat || !destinationData.coordinates.lng) {
-      delete destinationData.coordinates
+    // Only add coordinates if both lat and lng are provided
+    if (coordinates.lat && coordinates.lng) {
+      destinationData.coordinates = coordinates
     }
 
     onSave(destinationData)

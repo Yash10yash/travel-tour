@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FiCheckCircle, FiXCircle, FiLoader } from 'react-icons/fi'
+import { FiCheckCircle, FiLoader } from 'react-icons/fi'
 import { bookingService } from '../services/booking.service'
 import { paymentService } from '../services/payment.service'
 import toast from 'react-hot-toast'
@@ -81,7 +81,7 @@ const Payment = () => {
 
         const razorpay = new window.Razorpay(options)
         razorpay.open()
-        razorpay.on('payment.failed', function (response: any) {
+        razorpay.on('payment.failed', function () {
           toast.error('Payment failed. Please try again.')
           setIsProcessing(false)
         })

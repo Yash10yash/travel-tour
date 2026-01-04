@@ -22,7 +22,14 @@ const Tours = () => {
 
   const { data, isLoading } = useQuery({
     queryKey: ['tours', filters, page],
-    queryFn: () => tourService.getTours({ ...filters, page, limit: 12 })
+    queryFn: () => tourService.getTours({ 
+      ...filters, 
+      page, 
+      limit: 12,
+      minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
+      maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+      duration: filters.duration ? Number(filters.duration) : undefined,
+    })
   })
 
   const handleFilterChange = (key: string, value: string) => {
@@ -210,7 +217,7 @@ const Tours = () => {
               <div key={i} className="card skeleton h-96"></div>
             ))}
           </div>
-        ) : data?.data?.length > 0 ? (
+        ) : data?.data && data.data.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {data.data.map((tour: Tour) => (
@@ -219,7 +226,7 @@ const Tours = () => {
             </div>
 
             {/* Pagination */}
-            {data.pages > 1 && (
+            {data.pages && data.pages > 1 && (
               <div className="flex justify-center items-center space-x-2 mt-12">
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
@@ -232,8 +239,8 @@ const Tours = () => {
                   Page {page} of {data.pages}
                 </span>
                 <button
-                  onClick={() => setPage(p => Math.min(data.pages, p + 1))}
-                  disabled={page === data.pages}
+                  onClick={() => setPage(p => Math.min(data.pages || 1, p + 1))}
+                  disabled={page === (data.pages || 1)}
                   className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
                 >
                   Next
