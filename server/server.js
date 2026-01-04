@@ -45,48 +45,36 @@ const app = express();
 // CORS configuration (must be before other middleware)
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      process.env.FRONTEND_URL || 'http://localhost:5173',
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:3000'
-    ];
-    
-    // Add Vercel preview and production URLs if FRONTEND_URL is set
-    if (process.env.FRONTEND_URL) {
-      const frontendUrl = process.env.FRONTEND_URL;
-      // Add the exact URL
-      if (!allowedOrigins.includes(frontendUrl)) {
-        allowedOrigins.push(frontendUrl);
-      }
-      // Also add without trailing slash if it has one
-      if (frontendUrl.endsWith('/')) {
-        allowedOrigins.push(frontendUrl.slice(0, -1));
-      } else {
-        allowedOrigins.push(frontendUrl + '/');
-      }
-    }
-    
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) {
       return callback(null, true);
     }
     
-    // Allow all Vercel preview deployments (*.vercel.app)
-    if (origin && origin.endsWith('.vercel.app')) {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:3000'
+    ].filter(Boolean); // Remove undefined values
+    
+    // Allow all Vercel preview and production deployments (*.vercel.app)
+    if (origin && (origin.endsWith('.vercel.app') || origin.includes('.vercel.app'))) {
+      console.log('✅ CORS: Allowing Vercel origin:', origin);
       return callback(null, true);
     }
     
     // Check if origin is in allowed list
     if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn('⚠️  CORS blocked origin:', origin);
-      console.warn('📋 Allowed origins:', allowedOrigins);
-      console.warn('🔧 FRONTEND_URL env:', process.env.FRONTEND_URL);
-      callback(new Error('Not allowed by CORS'));
+      console.log('✅ CORS: Allowing origin from allowed list:', origin);
+      return callback(null, true);
     }
+    
+    // Log blocked origin for debugging
+    console.warn('⚠️  CORS blocked origin:', origin);
+    console.warn('📋 Allowed origins:', allowedOrigins);
+    console.warn('🔧 FRONTEND_URL env:', process.env.FRONTEND_URL);
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
