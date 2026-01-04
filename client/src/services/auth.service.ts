@@ -62,6 +62,9 @@ export const authService = {
         }
         sessionStorage.setItem('user', JSON.stringify(userData))
       }
+      // Dispatch custom event to notify components of auth state change
+      window.dispatchEvent(new Event('auth-change'))
+      
       // Only log in development mode for security
       if (import.meta.env.DEV) {
         console.log('User logged in successfully')

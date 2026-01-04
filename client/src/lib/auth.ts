@@ -53,6 +53,8 @@ export const isAdmin = (): boolean => {
 export const logout = (): void => {
   removeToken()
   removeUser()
+  // Dispatch custom event to notify components of auth state change
+  window.dispatchEvent(new Event('auth-change'))
   window.location.href = '/'
 }
 

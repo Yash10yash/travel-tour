@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getUser, isAuthenticated, isAdmin, logout } from '../lib/auth'
 import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
@@ -6,9 +6,36 @@ import { FiMenu, FiX, FiUser, FiLogOut, FiSettings } from 'react-icons/fi'
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const authenticated = isAuthenticated()
-  const user = getUser()
-  const admin = isAdmin()
+  const [authenticated, setAuthenticated] = useState(isAuthenticated())
+  const [user, setUser] = useState(getUser())
+  const [admin, setAdmin] = useState(isAdmin())
+
+  // Listen for auth state changes (when login/logout happens)
+  useEffect(() => {
+    const updateAuthState = () => {
+      setAuthenticated(isAuthenticated())
+      setUser(getUser())
+      setAdmin(isAdmin())
+    }
+
+    // Listen for custom auth-change event (dispatched after login/logout)
+    window.addEventListener('auth-change', updateAuthState)
+
+    // Listen for storage events (triggered by other tabs/windows)
+    window.addEventListener('storage', updateAuthState)
+
+    // Also check on focus (when user comes back to tab)
+    window.addEventListener('focus', updateAuthState)
+
+    // Initial check
+    updateAuthState()
+
+    return () => {
+      window.removeEventListener('auth-change', updateAuthState)
+      window.removeEventListener('storage', updateAuthState)
+      window.removeEventListener('focus', updateAuthState)
+    }
+  }, [])
 
   const handleLogout = () => {
     logout()
