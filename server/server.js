@@ -53,11 +53,33 @@ const corsOptions = {
       'http://127.0.0.1:3000'
     ];
     
+    // Add Vercel preview and production URLs if FRONTEND_URL is set
+    if (process.env.FRONTEND_URL) {
+      const frontendUrl = process.env.FRONTEND_URL;
+      // Add the exact URL
+      if (!allowedOrigins.includes(frontendUrl)) {
+        allowedOrigins.push(frontendUrl);
+      }
+      // Also add without trailing slash if it has one
+      if (frontendUrl.endsWith('/')) {
+        allowedOrigins.push(frontendUrl.slice(0, -1));
+      } else {
+        allowedOrigins.push(frontendUrl + '/');
+      }
+    }
+    
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.warn('⚠️  CORS blocked origin:', origin);
+      console.warn('📋 Allowed origins:', allowedOrigins);
+      console.warn('🔧 FRONTEND_URL env:', process.env.FRONTEND_URL);
       callback(new Error('Not allowed by CORS'));
     }
   },
