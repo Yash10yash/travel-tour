@@ -96,17 +96,9 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware first
+// Apply CORS middleware first (must be before all other middleware)
+// The cors middleware automatically handles OPTIONS preflight requests
 app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly (before rate limiting)
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(204);
-});
 
 // Security middleware
 app.use(helmet({
